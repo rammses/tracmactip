@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """Facts retriever
-- Gets device facts form junos device using keypair authentication method
+- Gets device mac table form junos device using keypair authentication method
 """
 __author__      = "Mesut Bayrak 'Rammses' "
 __copyright__   = "Copyright 2016, ISTANBUL"
@@ -10,7 +10,7 @@ __license__ = "GPL"
 __version__ = "1.0.1"
 __maintainer__ = "Mesut Bayrak"
 __email__ = "mesut@mikronet.net"
-__status__ = "Beta "
+__status__ = "beta"
 
 import sys
 import csv
@@ -23,74 +23,50 @@ import yaml
 from jnpr.junos.factory.factory_loader import FactoryLoader
 
 
-def get_switch_data(formatted_filename,self):
-	with open(formatted_filename, 'r') as f:
-		reader = csv.reader(f)
-		switch_data = list(reader)
-	return switch_data
-	'''
-	bu komut ta text dosyadan switch ip port username ve key dosyası bilgisi okunur.
-	indis olarak switch data dönülür.
-	'''
+ hostname = '192.168.17.200'
+ username = 'tipboard'
+ private_key_file = "./tipboard_nopass.key"
+ connection_port = 2223
 
-def burda_dur(mesaj):
-	try:
-		input(mesaj)
-	except SyntaxError:
-		pass
+ dev = Device(host=hostname, user=username, ssh_private_key_file=private_key_file,port=connection_port)
 
 
+ yml = '''
+ EthernetSwitchingTable:
+   rpc: get-ethernet-switching-table-information
+   item: l2ng-l2ald-mac-entry-vlan/l2ng-mac-entry
+   key:
+      - l2ng-l2-mac-address
+      - l2ng-l2-mac-logical-interface
+      - l2ng-l2-vlan-id
+   view: EtherSwView
 
-if len(sys.argv) < 2:
-    print('Gerekli parametreleri girmediniz!')
-    print('kullanım şekli python3 get_ethernet_table.py switch_konfig_datasi.csv')
-    else:
+ EtherSwView:
+   fields:
+     mac: l2ng-l2-mac-address
+     port_id: l2ng-l2-mac-logical-interface
+     id: l2ng-l2-vlan-id
+ '''
 
+ globals().update(FactoryLoader().load(yaml.load(yml)))
 
-# hostname = '192.168.17.200'
-# username = 'tipboard'
-# private_key_file = "./tipboard_nopass.key"
-# connection_port = 2223
-
-# dev = Device(host=hostname, user=username, ssh_private_key_file=private_key_file,port=connection_port)
-
-
-# yml = '''
-# EthernetSwitchingTable:
-#   rpc: get-ethernet-switching-table-information
-#   item: l2ng-l2ald-mac-entry-vlan/l2ng-mac-entry
-#   key:
-#      - l2ng-l2-mac-address
-#      - l2ng-l2-mac-logical-interface
-#      - l2ng-l2-vlan-id
-#   view: EtherSwView
-
-# EtherSwView:
-#   fields:
-#     mac: l2ng-l2-mac-address
-#     port_id: l2ng-l2-mac-logical-interface
-#     id: l2ng-l2-vlan-id
-# '''
-
-# globals().update(FactoryLoader().load(yaml.load(yml)))
-
-# dev.open()
+ dev.open()
 
 
-# table = EthernetSwitchingTable(dev)
-# table.get()
-# print('tablo icerigi :',table)
-# dev.close()
+ table = EthernetSwitchingTable(dev)
+ table.get()
+ print('tablo icerigi :',table)
+ dev.close()
 
 
-# for i in table:
-#   print('mac:', i.mac)
-#   print('port id:', i.port_id)
-#   print('vlan id:', i.id)
-#   print()
+ for i in table:
+   print('mac:', i.mac)
+   print('port id:', i.port_id)
+   print('vlan id:', i.id)
+   print()
 
 '''
-yaml tablosu icin ornek xml ciktisi
+Yaml tablosu icin ornek xml ciktisi
 root@SWH_PS_WS_CA0201> show ethernet-switching table detail | display xml
 <rpc-reply xmlns:junos="http://xml.juniper.net/junos/15.1X53/junos">
     <l2ng-l2ald-rtb-macdb>

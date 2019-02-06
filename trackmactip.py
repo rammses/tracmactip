@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""tipboard mac sweep engine
+"""Facts retriever
 - Gets device facts form junos device using keypair authentication method
-- pushes searched mac addresses port and switch hostname info to tipboard
 """
 __author__      = "Mesut Bayrak 'Rammses' "
 __copyright__   = "Copyright 2016, ISTANBUL"
@@ -28,7 +27,7 @@ def get_switch_data(formatted_filename,self):
 	with open(formatted_filename, 'r') as f:
 		reader = csv.reader(f)
 		switch_data = list(reader)
-	return(switch_data)
+	return switch_data
 	'''
 	bu komut ta text dosyadan switch ip port username ve key dosyası bilgisi okunur.
 	indis olarak switch data dönülür.
@@ -42,11 +41,11 @@ def burda_dur(mesaj):
 
 
 
-if len(sys.argv) < 2:
+if len(sys.argv) < 3:
     print('Gerekli parametreleri girmediniz!')
-    print('kullanım şekli python3 get_ethernet_table.py switch_konfig_datasi.csv')
-else:
-	print('Hoşgeldiniz')
+    print('kullanım şekli python3 trackmactip.py switch_konfig_datasi.csv trackmactip.config.cfg')
+	else:
+	print("testing")
 
 
 # hostname = '192.168.17.200'

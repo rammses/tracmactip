@@ -1,7 +1,20 @@
 # tracmactip
-tracks a special mac address in switchdatabase using keypair auth wit pyez, pushes the info to tipboard server
+Use case : 
+- no addressing/numbering on ethernet jacks 
+- need to identify which switch and port
+- You need to have a mobile ethernet client, any laptop/raspberry/arduino will do
 
-# PYez ve Tipboard ile mac tracking
+What you need to do for this to work:
+you;
+- need to enter the mac address to config file 
+- have to create a csv file as mentioned below
+- need to create a netconf user on every juniper switch you own 
+- for security reasons i made this using keypair auth which is explained below if you do know what you do you can use username password auth but i don't reccomend it
+
+
+tracks a special mac address in JUNOS based switches addressed in csv based database using keypair auth wit pyez, pushes the info to an indicator at tipboard server
+
+## PYez ve Tipboard ile mac tracking
 
 
 Sunucu ubuntu 16.04 
