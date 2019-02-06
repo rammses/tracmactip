@@ -23,6 +23,10 @@ from pprint import pprint
 import yaml
 from jnpr.junos.factory.factory_loader import FactoryLoader
 
+def get_config_data(formatted_filename,self):
+    # TODO: config dosyasını okuyup değişkenleri config_data indexine sıralı ata
+    return(config_data)
+
 
 def get_switch_data(formatted_filename, self):
     # reads switch connection info and creates a tuple for every line
@@ -33,10 +37,10 @@ def get_switch_data(formatted_filename, self):
 
 
 def burda_dur(mesaj):
-    try:
-        input(mesaj)
-    except SyntaxError:
-        pass
+	try:
+		input(mesaj)
+	except SyntaxError:
+		pass
 
 
 if len(sys.argv) < 3:
