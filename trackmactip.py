@@ -45,17 +45,25 @@ else:
     config_file = sys.argv[2]
 
     config=get_config_data(config_file,"")
-    print(config['Tracked_Mac'])
-    print("---------")
+    #print(config['Tracked_Mac'])
+    #print("---------")
 
     devices=get_switch_data(switch_db_file,"")
-    print(devices)
+    print(devices[0][0])
     print("---------")
 
-# hostname = '192.168.17.200'
-# username = 'tipboard'
-# private_key_file = "./tipboard_nopass.key"
-# connection_port = 2223
+    hostname = devices[0][0]
+    print(hostname)
+    connection_port = devices[0][1]
+    print(connection_port)
+    username = devices[0][2]
+    print(username)
+    private_key_file = devices[0][3]
+    print(private_key_file)
+    # sw db den okuyup değişkenlere yazıp düzgün print ettik
+    print(len(devices))
+    # device tuple boyutunu da aldık döngüde kullanmak için
+    # TODO: Aşağıdaki engine kodunu döngüde kullanılabilecek bir fonksiona cevir.
 
 # dev = Device(host=hostname, user=username, ssh_private_key_file=private_key_file,port=connection_port)
 
