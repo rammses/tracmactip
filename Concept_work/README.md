@@ -1,7 +1,8 @@
-#Concept work for pyez Junos
+# Concept work for pyez Junos
 Don't forget to have key files within this folder
 please change variables first
-
+## About check_concept.py
+Gets mac database and displays it on shell 
 depends heavily on junos version and pyez version if your environment is different than
 - Junos 15.1X53-D590.1
 - Pyez 2.2
@@ -42,3 +43,6 @@ if the output is not shown as
                 <l2ng-l2-mac-learn-mask>0x00000001</l2ng-l2-mac-learn-mask>
             </l2ng-l2ald-mac-entry-vlan>
 Change the yml code according to your output 
+
+## About get_facts.py
+The most simple communications check file. Use it for authentication check
