@@ -42,8 +42,8 @@ def burda_dur(mesaj):
 
 
 if len(sys.argv) < 3:
-    print('Gerekli parametreleri girmediniz!')
-    print('kullanım şekli python3 trackmactip.py switch_konfig_datasi.csv trackmactip.config.cfg')
+    print('You did not enter the required parameters!')
+    print('Usage python3 trackmactip.py switch_database.csv trackmactip.cfg')
 	else:
 	print("testing")
 
