@@ -4,8 +4,8 @@
 """Facts retriever
 - Gets device facts form junos device using keypair authentication method
 """
-__author__      = "Mesut Bayrak 'Rammses' "
-__copyright__   = "Copyright 2016, ISTANBUL"
+__author__ = "Mesut Bayrak 'Rammses' "
+__copyright__ = "Copyright 2016, ISTANBUL"
 __license__ = "GPL"
 __version__ = "1.0.1"
 __maintainer__ = "Mesut Bayrak"
@@ -14,6 +14,7 @@ __status__ = "Beta "
 
 import sys
 import csv
+import pprint
 import os
 from jnpr.junos import Device
 from jnpr.junos.exception import ConnectError
@@ -23,31 +24,25 @@ import yaml
 from jnpr.junos.factory.factory_loader import FactoryLoader
 
 
-def get_switch_data(formatted_filename,self):
-	with open(formatted_filename, 'r') as f:
-		reader = csv.reader(f)
-		switch_data = list(reader)
-	return switch_data
-	'''
-	bu komut ta text dosyadan switch ip port username ve key dosyası bilgisi okunur.
-	indis olarak switch data dönülür.
-	'''
+def get_switch_data(formatted_filename, self):
+    # reads switch connection info and creates a tuple for every line
+    with open(formatted_filename, 'r') as f:
+        reader = csv.reader(f)
+        switch_data = list(reader)
+    return switch_data
+    
 
 def burda_dur(mesaj):
-	try:
-		input(mesaj)
-	except SyntaxError:
-		pass
-
+    try:
+        input(mesaj)
+    except SyntaxError:
+        pass
 
 
 if len(sys.argv) < 3:
-	print('Gerekli parametreleri girmediniz!')
-	print('kullanım şekli python3 trackmactip.py switch_konfig_datasi.csv trackmactip.cfg')
+    print('Gerekli parametreleri girmediniz!')
+    print('kullanım şekli python3 trackmactip.py switch_konfig_datasi.csv trackmactip.cfg')
 else:
-		switch_data=get_switch_data('./switch_database.csv',"")
-		print("Switch data :",switch_data)
-		print("Switch data :", switch_data[1][0])
 
 # hostname = '192.168.17.200'
 # username = 'tipboard'
