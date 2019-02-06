@@ -6,6 +6,7 @@ Use case :
 - You need to have a mobile ethernet client, any laptop/raspberry/arduino will do
 
 What you need to do for this to work:
+
 you;
 - need to enter the mac address to config file 
 - have to create a csv file as mentioned below
@@ -18,7 +19,7 @@ tracks a special mac address in JUNOS based switches addressed in csv based data
 ## PYez ve Tipboard ile mac tracking
 
 
-Sunucu ubuntu 16.04 
+Server ubuntu 16.04 
 
 ## Dependency installations for PYez modules
 
@@ -237,6 +238,41 @@ use the get_facts.py file at concept_work folder to check minimal access to swit
 	 'virtual': False}
 
 ## Usage Of trackmactip.py
+
+Usage
+
+    #python3 trackmactip.py ./switch_database.csv ./trackmactip.yaml
+
+### The switch_database.csv file explained
+Yet another boring csv file, you have to add every device and their private key location with the order show below.
+
+    #"switch_ip_address","switch_netconf_port","netconf_username","private_key_file_location"
+    "192.168.17.200","2223","tipboard","./tipboard_nopass.key"
+    "192.168.17.200","830","readonly","./readnly_users_nopassword_private.key"
+
+### The config.yaml file explained
+
+It is actually very human readable
+if you want to track additional ip addresses just add them and increase the number. Just remember tile will display the information based FIFO
+
+So if you plug mac1 first then mac2 second you'll be seeing mac2 on tipboard tile.
+Tile and API key section is going to be explained in tipboard server setup.   
+
+    Logging:
+      logfile : '/var/log/trackmactip.log'
+      verbose_logging: False
+    
+    Tracked_Mac:
+      mac-address1: "00:01:02:03:04:05"
+      mac-address2: "0a:0b:0c:0d:0e:0f"
+    
+    Tipboard:
+      tipboardServer: "192.168.17.91"
+      tipboardPort: "192.168.17.91"
+      tipboardAPIkey: "e2c3275d0e1a4bc0da360dd225d74a43"
+      tipboardTileData: "tile=text key=id_1"
+
+
 
 
 
