@@ -22,28 +22,33 @@ from pprint import pprint
 import yaml
 from jnpr.junos.factory.factory_loader import FactoryLoader
 
-def get_config_data(formatted_filename,self):
+def get_config_data(config_filename,self):
     # TODO: config dosyasını okuyup değişkenleri config_data indexine sıralı ata
-    return(config_data)
+    with open(config_filename, 'r') as ymlfile:
+        config_data = yaml.load(ymlfile)
+    return config_data
 
 
 def get_switch_data(formatted_filename,self):
     with open(formatted_filename, 'r') as f:
+        next(f, None) # Skip first line (if any)
         reader = csv.reader(f)
         switch_data = list(reader)
     return switch_data
 
-
-
-
 if len(sys.argv) < 3:
     print('You did not enter the required parameters!')
-    print('Usage python3 trackmactip.py switch_database.csv trackmactip.cfg')
+    print('Usage python3 trackmactip.py ./switch_database.csv ./trackmactip.yaml')
 else:
-    #config=get_config_data("./trackmactip.cfg","")
-    #print(config)
+
+    switch_db_file = sys.argv[1]
+    config_file = sys.argv[2]
+
+    config=get_config_data(config_file,"")
+    print(config['Tracked_Mac'])
     print("---------")
-    devices=get_switch_data("./switch_database.csv","")
+
+    devices=get_switch_data(switch_db_file,"")
     print(devices)
     print("---------")
 
