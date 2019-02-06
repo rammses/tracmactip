@@ -22,31 +22,37 @@ from pprint import pprint
 import yaml
 from jnpr.junos.factory.factory_loader import FactoryLoader
 
+def get_config_data(formatted_filename,self):
+    # TODO: config dosyasını okuyup değişkenleri config_data indexine sıralı ata
+    return(config_data)
+
 
 def get_switch_data(formatted_filename,self):
-	with open(formatted_filename, 'r') as f:
-		reader = csv.reader(f)
-		switch_data = list(reader)
-	return switch_data
-	'''
-	bu komut ta text dosyadan switch ip port username ve key dosyası bilgisi okunur.
-	indis olarak switch data dönülür.
-	'''
+    # TODO: switch veri tabanını oku döngüye girecek şekilde tuple haline getir.
+    with open(formatted_filename, 'r') as f:
+        reader = csv.reader(f)
+        switch_data = list(reader)
+    return switch_data
+
 
 def burda_dur(mesaj):
-	try:
-		input(mesaj)
-	except SyntaxError:
-		pass
+    try:
+        input(mesaj)
+        except SyntaxError:
+        pass
 
 
 
 if len(sys.argv) < 3:
     print('You did not enter the required parameters!')
     print('Usage python3 trackmactip.py switch_database.csv trackmactip.cfg')
-	else:
-	print("testing")
-
+    else:
+    config=get_config_data("./trackmactip.cfg","")
+    print(config)
+    print("---------")
+    devices=get_switch_data("./switch_database.csv","")
+    print(devices)
+    print("---------")
 
 # hostname = '192.168.17.200'
 # username = 'tipboard'
