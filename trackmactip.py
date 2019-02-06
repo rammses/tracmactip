@@ -42,11 +42,12 @@ def burda_dur(mesaj):
 
 
 if len(sys.argv) < 3:
-    print('Gerekli parametreleri girmediniz!')
-    print('kullanım şekli python3 trackmactip.py switch_konfig_datasi.csv trackmactip.config.cfg')
-	else:
-	print("testing")
-
+	print('Gerekli parametreleri girmediniz!')
+	print('kullanım şekli python3 trackmactip.py switch_konfig_datasi.csv trackmactip.cfg')
+else:
+		switch_data=get_switch_data('./switch_database.csv',"")
+		print("Switch data :",switch_data)
+		print("Switch data :", switch_data[1][0])
 
 # hostname = '192.168.17.200'
 # username = 'tipboard'
