@@ -1,5 +1,6 @@
 # tracmactip
 Use case : 
+- Junos only !
 - no addressing/numbering on ethernet jacks 
 - need to identify which switch and port
 - You need to have a mobile ethernet client, any laptop/raspberry/arduino will do
@@ -19,21 +20,20 @@ tracks a special mac address in JUNOS based switches addressed in csv based data
 
 Sunucu ubuntu 16.04 
 
-## Pyez modüllerinin kurulması için gerekli dependency lerin kurulumu
+## Dependency installations for PYez modules
 
 		#sudo apt install  python3-pip python3-dev libxml2-dev libxslt-dev libssl-dev libffi-dev
 
-## pip3 repolarının güncellenmesi
+##Updating the PIP3 repositories
 		#pip3 install --upgrade pip
 
-## Pyez modülünün kurulumu
+## Installation of PYez
 
 		#pip3 install junos-eznc
 
-## PYez bağlantısının yapılabilmesi için netconf user oluşturulması ve keypair
-
-### bağlanacak server tarafında 
-Pasword yazmıyoruz
+## Creating a keypair and a Netconf user to establish connection using PYez 
+## Server side steps 
+do not use passwords in keypair
 
 		# ssh-keygen -t rsa
 		Generating public/private rsa key pair.
@@ -58,17 +58,17 @@ Pasword yazmıyoruz
 		+----[SHA256]-----+
 
 
-1. Bu komut 2 adet dosya oluşturur biri pub soyadını taşır bunu bağlantı kurulacak switch'e kopyalayıp yeni user oluşturmalısınız
-2. key soy adlı dosyayı bağlantı için ssh protokolüne kaynak olarak göstermelisiniz.
+1. this command creates 2 files, one has a pub extension you need upload this file to /var/tmp foler
+2. The private key file must be used as identity file while creating a connection to junos switch 
 
-Kolaylık olsun diye dosyayı sunucuya scp ile atıyoruz.
+put the public key file using scp to switch
 
 
 		# scp tipboard_nopass.key.pub root@192.168.17.200:/var/tmp/tipboard_nopass.key.pub
 		Password:
 		tipboard_nopass.key.pub
-
-## swithc te şifresiz keypair ile kullanıcı oluşturma
+## Switch side steps
+### Creating a Superuser enabled user with key only authentication 
 
 -----------
 		{master:0}[edit]
@@ -84,7 +84,7 @@ Kolaylık olsun diye dosyayı sunucuya scp ile atıyoruz.
 		#commit
 -----------
 
-## netconf açıyoruz
+### Enable netconf with port change def=830
 
 		root@SWH_PS_WS_CA0201# set system services netconf ssh
 		{master:0}[edit]
@@ -98,14 +98,14 @@ Kolaylık olsun diye dosyayı sunucuya scp ile atıyoruz.
 		configuration check succeeds
 		commit complete
 
-Portu 2223 olarak değiştiriyoruz ki ssh erişimi ile karışmasın
+Change port as 2223 
 
 		#set system services netconf ssh port 2223
 
 
-## Test ediyoruz
+## Testing
 
-netconf detaylarını görüyorsak herşey yolunda
+If you receive what we call dev.facts as shown below everything is fine. You've established an PYez connection to junos switch
 	
 	root@ubuntu:~# ssh -i ./tipboard_nopass.key tipboard@192.168.17.200 -p 2223 -s netconf
 	<!-- No zombies were killed during the creation of this user interface -->
@@ -130,8 +130,7 @@ netconf detaylarını görüyorsak herşey yolunda
 	]]>]]>
 
 
-Switchten Logon olmuşmuyuz görmek için
-default ssh portundan terminal istemeden -t netconf
+To test default ssh port request terminal using -t netconf or you get stuck in terminal screen and you have to kick newly created user from terminal.
 
 	{master:0}
 	root@SWH_PS_WS_CA0201> show system users
@@ -180,9 +179,9 @@ default ssh portundan terminal istemeden -t netconf
 
 
 
-## basit get_facts denemesi
+## Simple get_facts testing output
 
-Bu klasörde bulunan get_facts.py dosyasını kullanarak test yaparsanız 
+use the get_facts.py file at concept_work folder to check minimal access to switch 
 
 	 # python3 get_facts.py
 	 'HOME': '/var/home/tipboard',
@@ -237,28 +236,32 @@ Bu klasörde bulunan get_facts.py dosyasını kullanarak test yaparsanız
 	 'version_info': junos.version_info(major=(15, 1), type=X, minor=(53, 'D', 590), build=1),
 	 'virtual': False}
 
+## Usage Of trackmactip.py
 
 
-### Notlar
 
-## PIP bozulabilir rehash yapın geçin
-------------
-root@ubuntu:~#
-root@ubuntu:~# pip3
-Traceback (most recent call last):
-  File "/usr/bin/pip3", line 9, in <module>
-    from pip import main
-ImportError: cannot import name 'main'
-root@ubuntu:~# hash -d pip
--bash: hash: pip: not found
-root@ubuntu:~# hash -d pip3 <--
-root@ubuntu:~# pip3 install junos-eznc
-Collecting junos-eznc
-  Using cached https://files.pythonhosted.org/packages/00/b5/3d6d2d572789421b71d2bd7e3bae843db504cad59415bf817c7b9075aad6/junos_eznc-2.2.0-py2.py3-none-any.whl
-Collecting pyserial (from junos-eznc)
-------------
+### Notes
 
-## Paramiko nun crypto modülleri warning basabilir bu bilinen bir bug kullandığım paramiko versiyonu ile ilgili.
+## PIP may create problems 
+Rehash and continue as shown below
+
+    root@ubuntu:~#
+    root@ubuntu:~# pip3
+    Traceback (most recent call last):
+      File "/usr/bin/pip3", line 9, in <module>
+        from pip import main
+    ImportError: cannot import name 'main'
+    root@ubuntu:~# hash -d pip
+    -bash: hash: pip: not found
+    root@ubuntu:~# hash -d pip3 <--
+    root@ubuntu:~# pip3 install junos-eznc
+    Collecting junos-eznc
+      Using cached https://files.pythonhosted.org/packages/00/b5/3d6d2d572789421b71d2bd7e3bae843db504cad59415bf817c7b9075aad6/junos_eznc-2.2.0-py2.py3-none-any.whl
+    Collecting pyserial (from junos-eznc)
+
+
+## Some of paramiko's crypto functions are deprecated 
+This is a known bug you can ignore them. Sample outputs are shown below
 
 	/usr/local/lib/python3.5/dist-packages/paramiko/kex_ecdh_nist.py:39: CryptographyDeprecationWarning: encode_point has been deprecated on EllipticCurvePublicNumbers and will be removed in a future version. Please use EllipticCurvePublicKey.public_bytes to obtain both compressed and uncompressed point encoding.
 	  m.add_string(self.Q_C.public_numbers().encode_point())
