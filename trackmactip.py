@@ -30,7 +30,7 @@ def get_switch_data(formatted_filename, self):
         reader = csv.reader(f)
         switch_data = list(reader)
     return switch_data
-    
+
 
 def burda_dur(mesaj):
     try:
@@ -42,7 +42,10 @@ def burda_dur(mesaj):
 if len(sys.argv) < 3:
     print('Gerekli parametreleri girmediniz!')
     print('kullanım şekli python3 trackmactip.py switch_konfig_datasi.csv trackmactip.cfg')
-else:
+    else:
+    switch_data = get_switch_data('./switch_database.csv', "")
+    pprint("Switch data :", switch_data)
+    print("Switch data :", switch_data[1][0])
 
 # hostname = '192.168.17.200'
 # username = 'tipboard'
