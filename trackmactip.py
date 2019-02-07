@@ -36,6 +36,40 @@ def get_switch_data(formatted_filename,self):
         switch_data = list(reader)
     return switch_data
 
+def search_for_mac(s_mac,s_ip,s_port,s_file,s_user):
+    dev = Device(host=s_ip, user=s_user, ssh_private_key_file=s_file,port=s_port)
+
+    yml = '''
+    EthernetSwitchingTable:
+      rpc: get-ethernet-switching-table-information
+      item: l2ng-l2ald-mac-entry-vlan/l2ng-mac-entry
+      key:
+         - l2ng-l2-mac-address
+         - l2ng-l2-mac-logical-interface
+         - l2ng-l2-vlan-id
+      view: EtherSwView
+
+    EtherSwView:
+      fields:
+        mac: l2ng-l2-mac-address
+        port_id: l2ng-l2-mac-logical-interface
+        id: l2ng-l2-vlan-id
+    '''
+
+    globals().update(FactoryLoader().load(yaml.load(yml)))
+    dev.open()
+    table = EthernetSwitchingTable(dev)
+    table.get()
+    print('tablo icerigi :',table)
+    dev.close()
+
+    for i in table:
+        print('mac:', i.mac)
+        print('port id:', i.port_id)
+        print('vlan id:', i.id)
+        print()
+    return s_location,s_name,s_port
+
 if len(sys.argv) < 3:
     print('You did not enter the required parameters!')
     print('Usage python3 trackmactip.py ./switch_database.csv ./trackmactip.yaml')
@@ -65,42 +99,7 @@ else:
     # device tuple boyutunu da aldık döngüde kullanmak için
     # TODO: Aşağıdaki engine kodunu döngüde kullanılabilecek bir fonksiona cevir.
 
-# dev = Device(host=hostname, user=username, ssh_private_key_file=private_key_file,port=connection_port)
 
-
-# yml = '''
-# EthernetSwitchingTable:
-#   rpc: get-ethernet-switching-table-information
-#   item: l2ng-l2ald-mac-entry-vlan/l2ng-mac-entry
-#   key:
-#      - l2ng-l2-mac-address
-#      - l2ng-l2-mac-logical-interface
-#      - l2ng-l2-vlan-id
-#   view: EtherSwView
-
-# EtherSwView:
-#   fields:
-#     mac: l2ng-l2-mac-address
-#     port_id: l2ng-l2-mac-logical-interface
-#     id: l2ng-l2-vlan-id
-# '''
-
-# globals().update(FactoryLoader().load(yaml.load(yml)))
-
-# dev.open()
-
-
-# table = EthernetSwitchingTable(dev)
-# table.get()
-# print('tablo icerigi :',table)
-# dev.close()
-
-
-# for i in table:
-#   print('mac:', i.mac)
-#   print('port id:', i.port_id)
-#   print('vlan id:', i.id)
-#   print()
 
 '''
 yaml tablosu icin ornek xml ciktisi
