@@ -272,6 +272,63 @@ Tile and API key section is going to be explained in tipboard server setup.
       tipboardAPIkey: "e2c3275d0e1a4bc0da360dd225d74a43"
       tipboardTileData: "tile=text key=id_1"
 
+## Installation of Tipboard server
+It is pretty straightforward as stated on tipboards documentation. You can do it on the same server as the code runs 
+
+You have to ;
+
+- Create an api key which is located on ~/.tipboard/settings-local.py
+- Create a layout for us the model below is fine
+
+        layout:
+            - row_1_of_2:
+                - col_1_of_1:
+                    - tile_template: big_value
+                      tile_id: raspberry
+                      title: Raspberrys location
+                      classes:
+            - row_1_of_2:
+                - col_1_of_1:
+                    - tile_template: empty
+                      tile_id: empty
+                      title: Laptops Location
+                      classes:
+- Use the post model for tiles as shown below
+    
+    1. Top Tile
+    
+            curl http://192.168.17.91:7373/api/v0.1/6c2498eac64f435797f22107b525db80/push\
+                 -X POST\
+                 -d "tile=big_value"\
+                 -d "key=raspberry"\
+                 -d 'data={"title": "Raspberrys location",
+                           "description": "MAC Address : 01:02:03:04:05:06",
+                           "big-value": "sw1 port 25",
+                           "upper-left-label": "Cabinet: ",
+                           "upper-left-value": "5",
+                           "lower-left-label": "Kat/Floor:",
+                           "lower-left-value": "2",
+                           "upper-right-label": "Before :",
+                           "upper-right-value": "Sw2 port 24",
+                           "lower-right-label": "Cabinet:",
+                           "lower-right-value": "2"}'
+    2. Bottom Tile    
+
+            curl http://192.168.17.91:7373/api/v0.1/6c2498eac64f435797f22107b525db80/push\
+                 -X POST\
+                 -d "tile=big_value"\
+                 -d "key=laptop1"\
+                 -d 'data={"title": "Raspberrys location",
+                           "description": "MAC Address : 01:02:03:04:05:06",
+                           "big-value": "sw1 port 25",
+                           "upper-left-label": "Cabinet: ",
+                           "upper-left-value": "5",
+                           "lower-left-label": "Kat/Floor:",
+                           "lower-left-value": "2",
+                           "upper-right-label": "Before :",
+                           "upper-right-value": "Sw2 port 24",
+                           "lower-right-label": "Cabinet:",
+                           "lower-right-value": "2"}'
 
 
 
