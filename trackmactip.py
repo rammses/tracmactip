@@ -60,14 +60,13 @@ def search_for_mac(s_mac,s_ip,s_port,s_file,s_user):
     dev.open()
     table = EthernetSwitchingTable(dev)
     table.get()
-    print('tablo icerigi :',table)
     dev.close()
 
     for i in table:
-        print('mac:', i.mac)
-        print('port id:', i.port_id)
-        print('vlan id:', i.id)
-        print()
+        if i.mac == s_mac:
+            s_port = i.port_id
+            s_name = dev.facts.['hostname']
+
     return s_location,s_name,s_port
 
 if len(sys.argv) < 3:

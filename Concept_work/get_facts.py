@@ -19,7 +19,7 @@ from jnpr.junos.exception import ConnectError
 from pprint import pprint
 
 
-hostname = '192.168.17.200'
+hostname = '85.99.118.88'
 username = 'tipboard'
 private_key_file = "./tipboard_nopass.key"
 connection_port = 2223
