@@ -15,6 +15,7 @@ __status__ = "Beta "
 import sys
 import os
 import threading
+import requests
 import csv
 import yaml
 import pprint
@@ -47,6 +48,38 @@ def name_details(text):
 
     return s_geo, s_floor, s_datacabinet, s_vc,
 
+import requests
+
+
+def post_info(t_description, t_big_value_switch, t_big_value_port, t_upper_left_value, t_lower_left_value, t_upper_right_value, t_lower_right_value, server, api_key):
+    t_title='Raspeberry 1 location'
+    # t_description='01:02:03:04:05:06'
+    # t_big_value_switch=' T3-BK-DK1-VC1'
+    # t_big_value_port='ge-0/0/20'
+    t_upper_left_label ='Cabinet / Kabin'
+    # t_upper_left_value='DK3'
+    t_lower_left_label ='Floor / Kat :'
+    # t_lower_left_value='BK'
+    t_upper_right_label ='Time changed :'
+    # t_upper_right_value='22:00:03'
+    t_lower_right_label ='Before'
+    # t_lower_right_value='test'
+    data = {
+      'tile': 'big_value',
+      'key': 'raspberry',
+      'data': '{"title": "'+t_title+'",'
+              '"description": "'+t_description+'",'
+              '"big-value": "'+t_big_value_switch+'\\r'+t_big_value_port+'",'
+              '"upper-left-label": "'+t_upper_left_label+'",'
+              '"upper-left-value": "'+t_upper_left_value+'",'
+              '"lower-left-label": "'+t_lower_left_label+'",'
+              '"lower-left-value": "'+t_lower_left_value+'",'
+              '"upper-right-label": "'+t_upper_right_label+'",'
+              '"upper-right-value": "'+t_upper_right_value+'",'
+              '"lower-right-label": "'+t_lower_right_label+'",'
+              '"lower-right-value": "'+t_lower_right_value+'"}'
+    }
+    requests.post('http://'+server+'/api/v0.1/'+api_key+'/push', data=data)
 
 def get_config_data(config_filename, self):
     with open(config_filename, 'r') as ymlfile:
@@ -103,8 +136,8 @@ def search_for_mac_and_tip(s_mac, s_ip, s_port, s_file, s_user):
             s_VC = s_details[3]
             s_Message = "found"
     dev.close()
-    print(s_name,s_location, s_FLOOR, s_DC, s_VC, s_port , s_Message)
-
+    #print(s_name,s_location, s_FLOOR, s_DC, s_VC, s_port , s_Message)
+    post_info(s_mac, s_name, s_port, s_DC, s_FLOOR,'22:00:00', 'tewer', '192.168.17.91:7373', 'e2c3275d0e1a4bc0da360dd225d74a43')
     # return( s_name,s_location, s_FLOOR, s_DC, s_VC, s_port , s_Message)
 
 

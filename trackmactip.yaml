@@ -9,7 +9,7 @@ Tipboard:
   tipboardServer: "192.168.17.91"
   tipboardPort: "7373"
   tipboardAPIkey: "e2c3275d0e1a4bc0da360dd225d74a43"
-  tipboardTileData: "tile=text key=id_1"
+  tipboardTileData: "tile=big_value key=raspberry"
 
 Engine:
   ThreadCount: "5"
