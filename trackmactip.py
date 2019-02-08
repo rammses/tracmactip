@@ -22,7 +22,8 @@ from pprint import pprint
 import yaml
 from jnpr.junos.factory.factory_loader import FactoryLoader
 
-def name_details(text, self):
+
+def name_details(text):
     """ Name Parser
     - Parses info from a dash limited string
     - Sample string T3-BK-DK1-VC1"
@@ -40,9 +41,7 @@ def name_details(text, self):
     return s_geo, s_floor, s_datacabinet, s_vc
 
 
-
 def get_config_data(config_filename, self):
-    # TODO: config dosyasını okuyup değişkenleri config_data indexine sıralı ata
     with open(config_filename, 'r') as ymlfile:
         config_data = yaml.load(ymlfile)
     return config_data
@@ -50,14 +49,20 @@ def get_config_data(config_filename, self):
 
 def get_switch_data(formatted_filename, self):
     with open(formatted_filename, 'r') as f:
-        next(f, None) # Skip first line (if any)
+        next(f, None)  # Skip first line (if any)
         reader = csv.reader(f)
         switch_data = list(reader)
     return switch_data
 
-def search_for_mac(s_mac,s_ip,s_port,s_file,s_user):
-    dev = Device(host=s_ip, user=s_user, ssh_private_key_file=s_file,port=s_port)
 
+def search_for_mac(s_mac, s_ip, s_port, s_file, s_user):
+    dev = Device(host=s_ip, user=s_user, ssh_private_key_file=s_file, port=s_port)
+    s_location =""
+    s_name=""
+    s_FLOOR=""
+    s_DC=""
+    s_VC=""
+    s_Message=""
     yml = '''
     EthernetSwitchingTable:
       rpc: get-ethernet-switching-table-information
@@ -79,22 +84,19 @@ def search_for_mac(s_mac,s_ip,s_port,s_file,s_user):
     dev.open()
     table = EthernetSwitchingTable(dev)
     table.get()
-    dev.close()
 
     for i in table:
         if i.mac == s_mac:
             s_port = i.port_id
-            s._name= dev.facts.['hostname']
-            s.details = name_details(dev.facts.['hostname'])
-            s.location = s.details[0]
-            s.location = s.details[1]
-            s.location = s.details[2]
-            s.location = s.details[3]
-
-    return s_location,s_name,s_port
-
-
-
+            s_name = dev.facts['hostname']
+            s_details = name_details(dev.facts['hostname'])
+            s_location = s_details[0]
+            s_FLOOR = s_details[1]
+            s_DC = s_details[2]
+            s_VC = s_details[3]
+            s_Message = "found"
+    dev.close()
+    return( s_name,s_location, s_FLOOR, s_DC, s_VC, s_port , s_Message)
 
 
 if len(sys.argv) < 3:
@@ -105,26 +107,38 @@ else:
     switch_db_file = sys.argv[1]
     config_file = sys.argv[2]
 
-    config=get_config_data(config_file,"")
-    #print(config['Tracked_Mac'])
-    #print("---------")
+    config = get_config_data(config_file, "")
+    devices = get_switch_data(switch_db_file, "")
+    mac_address = config['Tracked_Mac']['mac-address']
 
-    devices=get_switch_data(switch_db_file,"")
-    print(devices[0][0])
-    print("---------")
+    Log_Stat = config['Logging']['verbose_logging']
 
-    hostname = devices[0][0]
-    print(hostname)
-    connection_port = devices[0][1]
-    print(connection_port)
-    username = devices[0][2]
-    print(username)
-    private_key_file = devices[0][3]
-    print(private_key_file)
-    # sw db den okuyup değişkenlere yazıp düzgün print ettik
-    print(len(devices))
-    # device tuple boyutunu da aldık döngüde kullanmak için
-    # TODO: Aşağıdaki engine kodunu döngüde kullanılabilecek bir fonksiona cevir.
+    if Log_Stat == True:
+        print(config['Tracked_Mac']['mac-address'])
+        print("---------")
+        print("--------- DB Detayları ---------")
+        print('switchteki ilk girdi :', devices[0][0])
+        hostname = devices[0][0]
+        print('IP Adresi :',hostname)
+        connection_port = devices[0][1]
+        print('Port :',connection_port)
+        username = devices[0][2]
+        print('Username :',username)
+        private_key_file = devices[0][3]
+        print('Private Key dosyası :',private_key_file)
+        # sw db den okuyup değişkenlere yazıp düzgün print ettik
+        print('DB deki Girdi adedi : ',len(devices))
+        print("------ DB Detayları Bitti ------")
+        # device tuple boyutunu da aldık döngüde kullanmak için
+
+    for k in range(len(devices)):
+        hostname = devices[k][0]
+        connection_port = devices[k][1]
+        username = devices[0][2]
+        private_key_file = devices[0][3]
+        found = search_for_mac(mac_address, hostname, connection_port, private_key_file, username)
+        print('Aranan Mac Detayları :',found)
+
 
 
 

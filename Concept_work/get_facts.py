@@ -21,7 +21,7 @@ from pprint import pprint
 
 hostname = '85.99.118.88'
 username = 'tipboard'
-private_key_file = "./tipboard_nopass.key"
+private_key_file = "tipboard_nopass.key"
 connection_port = 2223
 
 dev = Device(host=hostname, user=username, ssh_private_key_file=private_key_file,port=connection_port)
@@ -35,7 +35,5 @@ except Exception as err:
     print (err)
     sys.exit(1)
 
-
-
-pprint (dev.facts)
+print (dev.facts['hostname'])
 dev.close()

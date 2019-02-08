@@ -1,2 +1,2 @@
 #"switch_ip_address","switch_netconf_port","netconf_username","private_key_file_location"
-"192.168.17.200","2223","tipboard","./tipboard_nopass.key"
+"192.168.17.200","2223","tipboard","tipboard_nopass.key"

@@ -2,8 +2,9 @@
 Don't forget to have key files within this folder
 please change variables first
 ## About check_concept.py
-Gets mac database and displays it on shell 
-depends heavily on junos version and pyez version if your environment is different than
+- Gets mac database and displays it on shell 
+
+Depends heavily on junos version and pyez version if your environment is different than
 - Junos 15.1X53-D590.1
 - Pyez 2.2
 
