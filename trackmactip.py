@@ -22,14 +22,33 @@ from pprint import pprint
 import yaml
 from jnpr.junos.factory.factory_loader import FactoryLoader
 
-def get_config_data(config_filename,self):
+def name_details(text, self):
+    """ Name Parser
+    - Parses info from a dash limited string
+    - Sample string T3-BK-DK1-VC1"
+    -               |  |  |   |
+    -               |  |  |   ---- Virtula Chasis No
+    -               |  |  -------- Data Cabinet no
+    -               |  ----------- Floor
+    -                ------------- Geographic location
+    """
+    text1 = text.split('-')
+    s_geo = text1[0]
+    s_floor = text1[1]
+    s_datacabinet = text1[2]
+    s_vc = text1[3]
+    return s_geo, s_floor, s_datacabinet, s_vc
+
+
+
+def get_config_data(config_filename, self):
     # TODO: config dosyasını okuyup değişkenleri config_data indexine sıralı ata
     with open(config_filename, 'r') as ymlfile:
         config_data = yaml.load(ymlfile)
     return config_data
 
 
-def get_switch_data(formatted_filename,self):
+def get_switch_data(formatted_filename, self):
     with open(formatted_filename, 'r') as f:
         next(f, None) # Skip first line (if any)
         reader = csv.reader(f)
@@ -65,9 +84,18 @@ def search_for_mac(s_mac,s_ip,s_port,s_file,s_user):
     for i in table:
         if i.mac == s_mac:
             s_port = i.port_id
-            s_name = dev.facts.['hostname']
+            s._name= dev.facts.['hostname']
+            s.details = name_details(dev.facts.['hostname'])
+            s.location = s.details[0]
+            s.location = s.details[1]
+            s.location = s.details[2]
+            s.location = s.details[3]
 
     return s_location,s_name,s_port
+
+
+
+
 
 if len(sys.argv) < 3:
     print('You did not enter the required parameters!')
