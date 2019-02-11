@@ -19,7 +19,7 @@ import threading
 import requests
 import csv
 import yaml
-import pprint
+import time
 from jnpr.junos import Device
 from jnpr.junos.exception import ConnectError
 from jnpr.junos.factory.factory_loader import FactoryLoader
@@ -79,7 +79,8 @@ def post_info(t_title, t_description, t_big_value_switch, t_big_value_port, t_up
         '"lower-right-label": "' + t_lower_right_label + '",'
         '"lower-right-value": "' + t_lower_right_value + '"}'
     }
-    print(data)
+    if Log_Stat == True:
+        print('data to post tipboard :',data)
     requests.post('http://' + server + '/api/v0.1/' + api_key + '/push', data=data)
     # r.status_code, r.reason
     # print(r.text)
@@ -101,7 +102,7 @@ def get_switch_data(formatted_filename, self):
     return switch_data
 
 
-def search_for_mac_and_tip(s_mac, s_ip, s_port, s_current_time,s_file, s_user):
+def search_for_mac_and_tip(s_mac, s_ip, s_port, s_current_time,s_file, s_user,ss_server,ss_api):
     dev = Device(host=s_ip, user=s_user, ssh_private_key_file=s_file, port=s_port)
     s_location =""
     s_name=""
@@ -142,8 +143,10 @@ def search_for_mac_and_tip(s_mac, s_ip, s_port, s_current_time,s_file, s_user):
             s_VC = s_details[3]
             s_Message = "found"
     dev.close()
-    print((s_mac, s_name, s_port, s_VC, s_DC,s_FLOOR, s_current_time,s_ip,'192.168.17.91:7373', '6c2498eac64f435797f22107b525db80'))
-    post_info(s_mac, s_name, s_port, s_VC, s_DC,s_FLOOR,s_current_time,s_ip,'192.168.17.91:7373', '6c2498eac64f435797f22107b525db80')
+
+    if Log_Stat == True:
+        print('Data to be posted :',(s_mac, s_name, s_port, s_VC, s_DC,s_FLOOR, s_current_time,s_ip,ss_server, ss_api))
+    post_info(s_mac, s_name, s_port, s_VC, s_DC,s_FLOOR,s_current_time,s_ip,ss_server, ss_api)
 
 
 
@@ -162,55 +165,35 @@ else:
     Log_Stat = config['Logging']['verbose_logging']
 
     private_key_file = devices[0][3]
+    server_address = config['Tipboard']['tipboardServer']+':'+config['Tipboard']['tipboardPort']
+    api_key = config['Tipboard']['tipboardAPIkey']
 
     if Log_Stat == True:
-        print(config['Tracked_Mac']['mac-address'])
-        print("---------")
-        print("--------- DB Detayları ---------")
-        print('switchteki ilk girdi :', devices[0][0])
+        print('Mac to look for :',config['Tracked_Mac']['mac-address'])
+        print('First entrt in CSV :', devices[0][0])
         hostname = devices[0][0]
-        print('IP Adresi :',hostname)
+        print('IP Address :',hostname)
         connection_port = devices[0][1]
         print('Port :',connection_port)
         username = devices[0][2]
         print('Username :',username)
         print('Private Key dosyası :',private_key_file)
         print('DB deki Girdi adedi : ',len(devices))
-        print("------ DB Detayları Bitti ------")
+    sleep_time=int(config['Engine']['checkInterval'])
+    p=1
+    while True:
+        thread_list = []
+        for k in range(len(devices)):
+            hostname = devices[k][0]
+            connection_port = devices[k][1]
+            username = devices[k][2]
+            private_key_file = devices[k][3]
+            current_time=str(datetime.datetime.now())
 
-
-    thread_list = []
-    for k in range(len(devices)):
-        hostname = devices[k][0]
-        connection_port = devices[k][1]
-        username = devices[k][2]
-        private_key_file = devices[k][3]
-        current_time=str(datetime.datetime.now())
-
-        thread = threading.Thread(target=search_for_mac_and_tip, args=(mac_address, hostname, connection_port, current_time,private_key_file, username))
-        thread_list.append(thread)
-        thread.start()
-
-
-
-
-'''
-yaml tablosu icin ornek xml ciktisi
-root@SWH_PS_WS_CA0201> show ethernet-switching table detail | display xml
-<rpc-reply xmlns:junos="http://xml.juniper.net/junos/15.1X53/junos">
-    <l2ng-l2ald-rtb-macdb>
-        <l2ng-l2ald-mac-entry-vlan junos:style="extensive">
-            <l2ng-l2-mac-address>00:09:0f:fe:46:c6</l2ng-l2-mac-address>
-            <mac-count-global>13</mac-count-global>
-            <learnt-mac-count>13</learnt-mac-count>
-            <l2ng-l2-mac-routing-instance>default-switch</l2ng-l2-mac-routing-instance>
-            <l2ng-l2-vlan-id>1</l2ng-l2-vlan-id>
-            <l2ng-l2-mac-vlan-name>default</l2ng-l2-mac-vlan-name>
-            <l2ng-l2-mac-logical-interface>ge-0/0/40.0</l2ng-l2-mac-logical-interface>
-            <l2ng-l2-mac-ifl-generation>473</l2ng-l2-mac-ifl-generation>
-            <l2ng-l2-mac-entry-flags>in_hash,in_ifd,in_ifl,in_vlan,in_rtt,kernel,in_ifbd</l2ng-l2-mac-entry-flags>
-            <l2ng-l2-mac-epoch>1</l2ng-l2-mac-epoch>
-            <l2ng-l2-mac-sequence-number>0</l2ng-l2-mac-sequence-number>
-            <l2ng-l2-mac-learn-mask>0x00000001</l2ng-l2-mac-learn-mask>
-        </l2ng-l2ald-mac-entry-vlan>
-'''
+            thread = threading.Thread(target=search_for_mac_and_tip, args=(mac_address, hostname, connection_port, current_time,private_key_file, username,server_address,api_key))
+            thread_list.append(thread)
+            thread.start()
+        if Log_Stat == True:
+            p += 1
+            print('loop ', p )
+        time.sleep(sleep_time)

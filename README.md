@@ -1,9 +1,12 @@
 # tracmactip
+
+A multithreaded switch port mapper, works only with juniper devices.
+
 Use case : 
-- Junos only !
+
 - no addressing/numbering on ethernet jacks 
 - need to identify which switch and port
-- You need to have a mobile ethernet client, any laptop/raspberry/arduino will do
+
 
 What you need to do for this to work:
 
@@ -12,14 +15,16 @@ you;
 - have to create a csv file as mentioned below
 - need to create a netconf user on every juniper switch you own 
 - for security reasons i made this using keypair auth which is explained below if you do know what you do you can use username password auth but i don't reccomend it
+- need to have a mobile ethernet client, any laptop/raspberry/arduino will do
 
 
-tracks a special mac address in JUNOS based switches addressed in csv based database using keypair auth wit pyez, pushes the info to an indicator at tipboard server
+TL:DR ; tracks a special mac address in JUNOS based switches addressed in csv based database using keypair auth wit pyez, 
+pushes the info to an indicator at tipboard server
 
-## PYez ve Tipboard ile mac tracking
+## Tracking mac with PYez And Tipboard
 
 
-Server ubuntu 16.04 
+I used Server ubuntu 16.04 everything is explained according to output of this distro 
 
 ## Dependency installations for PYez modules
 
@@ -59,8 +64,9 @@ do not use passwords in keypair
 		+----[SHA256]-----+
 
 
-1. this command creates 2 files, one has a pub extension you need upload this file to /var/tmp foler
-2. The private key file must be used as identity file while creating a connection to junos switch 
+1. this command creates 2 files, one has a pub extension. You need upload this file to /var/tmp folder on remote device 
+and add it to users authentication method and example is show below switch side steps
+2. The private key file must be used as identity file while creating a connection to junos device 
 
 put the public key file using scp to switch
 
@@ -106,7 +112,7 @@ Change port as 2223
 
 ## Testing
 
-If you receive what we call dev.facts as shown below everything is fine. You've established an PYez connection to junos switch
+If you receive what we call dev.hello as shown below everything is fine. You've established an PYez connection to junos switch
 	
 	root@ubuntu:~# ssh -i ./tipboard_nopass.key tipboard@192.168.17.200 -p 2223 -s netconf
 	<!-- No zombies were killed during the creation of this user interface -->
@@ -264,11 +270,11 @@ Tile and API key section is going to be explained in tipboard server setup.
     
     Tracked_Mac:
       mac-address1: "00:01:02:03:04:05"
-      mac-address2: "0a:0b:0c:0d:0e:0f"
+
     
     Tipboard:
       tipboardServer: "192.168.17.91"
-      tipboardPort: "192.168.17.91"
+      tipboardPort: "7373"
       tipboardAPIkey: "e2c3275d0e1a4bc0da360dd225d74a43"
       tipboardTileData: "tile=text key=id_1"
 

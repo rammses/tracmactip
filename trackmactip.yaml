@@ -3,7 +3,7 @@ Logging:
   verbose_logging: False
 
 Tracked_Mac:
-  mac-address: "48:6d:bb:78:2e:29"
+  mac-address: "18:f4:6a:c2:b3:01"
 
 Tipboard:
   tipboardServer: "192.168.17.91"
@@ -13,3 +13,4 @@ Tipboard:
 
 Engine:
   ThreadCount: "5"
+  checkInterval : "30" #seconds
