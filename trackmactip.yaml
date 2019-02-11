@@ -1,14 +1,14 @@
 Logging:
   logfile : '/var/log/trackmactip.log'
-  verbose_logging: True
+  verbose_logging: False
 
 Tracked_Mac:
-  mac-address: "b8:27:eb:dd:a4:df"
+  mac-address: "48:6d:bb:78:2e:29"
 
 Tipboard:
   tipboardServer: "192.168.17.91"
   tipboardPort: "7373"
-  tipboardAPIkey: "e2c3275d0e1a4bc0da360dd225d74a43"
+  tipboardAPIkey: "6c2498eac64f435797f22107b525db80"
   tipboardTileData: "tile=big_value key=raspberry"
 
 Engine:

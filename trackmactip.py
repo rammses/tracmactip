@@ -14,6 +14,7 @@ __status__ = "Beta "
 
 import sys
 import os
+import datetime
 import threading
 import requests
 import csv
@@ -48,38 +49,43 @@ def name_details(text):
 
     return s_geo, s_floor, s_datacabinet, s_vc,
 
-import requests
 
-
-def post_info(t_description, t_big_value_switch, t_big_value_port, t_upper_left_value, t_lower_left_value, t_upper_right_value, t_lower_right_value, server, api_key):
-    t_title='Raspeberry 1 location'
+def post_info(t_title, t_description, t_big_value_switch, t_big_value_port, t_upper_left_value, t_lower_left_value,
+              t_upper_right_value, t_lower_right_value, server, api_key):
+    t_title = 'Raspberry 1 location'
     # t_description='01:02:03:04:05:06'
     # t_big_value_switch=' T3-BK-DK1-VC1'
     # t_big_value_port='ge-0/0/20'
-    t_upper_left_label ='Cabinet / Kabin'
+    t_upper_left_label = 'Cabinet / Kabin'
     # t_upper_left_value='DK3'
-    t_lower_left_label ='Floor / Kat :'
+    t_lower_left_label = 'Floor / Kat :'
     # t_lower_left_value='BK'
-    t_upper_right_label ='Time changed :'
-    # t_upper_right_value='22:00:03'
-    t_lower_right_label ='Before'
+    t_upper_right_label = 'Time changed :'
+    # t_upper_right_value='333:00:03'
+    t_lower_right_label = 'Device ip : '
     # t_lower_right_value='test'
     data = {
-      'tile': 'big_value',
-      'key': 'raspberry',
-      'data': '{"title": "'+t_title+'",'
-              '"description": "'+t_description+'",'
-              '"big-value": "'+t_big_value_switch+'\\r'+t_big_value_port+'",'
-              '"upper-left-label": "'+t_upper_left_label+'",'
-              '"upper-left-value": "'+t_upper_left_value+'",'
-              '"lower-left-label": "'+t_lower_left_label+'",'
-              '"lower-left-value": "'+t_lower_left_value+'",'
-              '"upper-right-label": "'+t_upper_right_label+'",'
-              '"upper-right-value": "'+t_upper_right_value+'",'
-              '"lower-right-label": "'+t_lower_right_label+'",'
-              '"lower-right-value": "'+t_lower_right_value+'"}'
+        'tile': 'big_value',
+        'key': 'raspberry',
+        'data': '{"title": "' + t_title + '",'
+        '"description": "' + t_description + '",'
+        '"big-value": "' + t_big_value_switch + ' \\r' + t_big_value_port + '",'
+        '"upper-left-label": "' + t_upper_left_label + '",'
+        '"upper-left-value": "' + t_upper_left_value + '",'
+        '"lower-left-label": "' + t_lower_left_label + '",'
+        '"lower-left-value": "' + t_lower_left_value + '",'
+        '"upper-right-label": "' + t_upper_right_label + '",'
+        '"upper-right-value": "' + t_upper_right_value + '",'
+        '"lower-right-label": "' + t_lower_right_label + '",'
+        '"lower-right-value": "' + t_lower_right_value + '"}'
     }
-    requests.post('http://'+server+'/api/v0.1/'+api_key+'/push', data=data)
+    print(data)
+    requests.post('http://' + server + '/api/v0.1/' + api_key + '/push', data=data)
+    # r.status_code, r.reason
+    # print(r.text)
+    # print(r.status_code, r.reason)
+
+
 
 def get_config_data(config_filename, self):
     with open(config_filename, 'r') as ymlfile:
@@ -95,7 +101,7 @@ def get_switch_data(formatted_filename, self):
     return switch_data
 
 
-def search_for_mac_and_tip(s_mac, s_ip, s_port, s_file, s_user):
+def search_for_mac_and_tip(s_mac, s_ip, s_port, s_current_time,s_file, s_user):
     dev = Device(host=s_ip, user=s_user, ssh_private_key_file=s_file, port=s_port)
     s_location =""
     s_name=""
@@ -136,9 +142,9 @@ def search_for_mac_and_tip(s_mac, s_ip, s_port, s_file, s_user):
             s_VC = s_details[3]
             s_Message = "found"
     dev.close()
-    #print(s_name,s_location, s_FLOOR, s_DC, s_VC, s_port , s_Message)
-    post_info(s_mac, s_name, s_port, s_DC, s_FLOOR,'22:00:00', 'tewer', '192.168.17.91:7373', 'e2c3275d0e1a4bc0da360dd225d74a43')
-    # return( s_name,s_location, s_FLOOR, s_DC, s_VC, s_port , s_Message)
+    print((s_mac, s_name, s_port, s_VC, s_DC,s_FLOOR, s_current_time,s_ip,'192.168.17.91:7373', '6c2498eac64f435797f22107b525db80'))
+    post_info(s_mac, s_name, s_port, s_VC, s_DC,s_FLOOR,s_current_time,s_ip,'192.168.17.91:7373', '6c2498eac64f435797f22107b525db80')
+
 
 
 if len(sys.argv) < 3:
@@ -155,6 +161,8 @@ else:
     #Reading Logging status
     Log_Stat = config['Logging']['verbose_logging']
 
+    private_key_file = devices[0][3]
+
     if Log_Stat == True:
         print(config['Tracked_Mac']['mac-address'])
         print("---------")
@@ -166,18 +174,20 @@ else:
         print('Port :',connection_port)
         username = devices[0][2]
         print('Username :',username)
-        private_key_file = devices[0][3]
         print('Private Key dosyası :',private_key_file)
         print('DB deki Girdi adedi : ',len(devices))
         print("------ DB Detayları Bitti ------")
+
 
     thread_list = []
     for k in range(len(devices)):
         hostname = devices[k][0]
         connection_port = devices[k][1]
-        username = devices[0][2]
-        private_key_file = devices[0][3]
-        thread = threading.Thread(target=search_for_mac_and_tip, args=(mac_address, hostname, connection_port, private_key_file, username))
+        username = devices[k][2]
+        private_key_file = devices[k][3]
+        current_time=str(datetime.datetime.now())
+
+        thread = threading.Thread(target=search_for_mac_and_tip, args=(mac_address, hostname, connection_port, current_time,private_key_file, username))
         thread_list.append(thread)
         thread.start()
 
