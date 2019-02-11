@@ -249,6 +249,98 @@ Bu klasörde bulunan get_facts.py dosyasını kullanarak test yaparsanız
 	 'virtual': False}
 
 
+## trackmactip.py nin kullanımı
+
+Aşağıdaki gibi :
+
+    #python3 trackmactip.py ./switch_database.csv ./trackmactip.yaml
+
+### switch_database.csv dosyası ile ilgili
+Yine sıkıcı bir csv dosyası, evet her cihaz için bir satır açıp doldurmalısınız
+
+    #"switch_ip_address","switch_netconf_port","netconf_username","private_key_file_location"
+    "192.168.17.200","2223","tipboard","./tipboard_nopass.key"
+    "192.168.17.200","830","readonly","./readnly_users_nopassword_private.key"
+
+### config.yaml dosyası
+
+Anlaşılabilir yazmaya çalıştım, başka mac adreslerini de takip etmek istiyorsanız sayısını arttırıp devam ediniz
+fifo yöntemine göre en son gelen en üstte durur. Diğerleri program içersinde kullanılan bazı sabitler değerlerini
+mutlaka doldurunuz.   
+
+    Logging:
+      logfile : '/var/log/trackmactip.log'
+      verbose_logging: False
+    
+    Tracked_Mac:
+      mac-address1: "00:01:02:03:04:05"
+
+    
+    Tipboard:
+      tipboardServer: "192.168.17.91"
+      tipboardPort: "7373"
+      tipboardAPIkey: "e2c3275d0e1a4bc0da360dd225d74a43"
+      tipboardTileData: "tile=text key=id_1"
+
+## Tipboard server kurulumu
+
+Tipboard sunucunun kurulum dökümatasyonu oldukça yeterli takip edin zaten hemen çalışacak.
+Yapmanız gerekenler ;
+
+- Bir api key oluşturmanız lazım dosya: ~/.tipboard/settings-local.py
+- Bir de şablon oluşturmanız lazım, aşağıdaki epey yeterli. 2 tane alt alta panel açıyor sizde içine
+veri basıyorsunuz.
+
+        layout:
+            - row_1_of_2:
+                - col_1_of_1:
+                    - tile_template: big_value
+                      tile_id: raspberry
+                      title: Raspberrys location
+                      classes:
+            - row_1_of_2:
+                - col_1_of_1:
+                    - tile_template: empty
+                      tile_id: empty
+                      title: Laptops Location
+                      classes:
+
+- İçine veri basmak ve test etmek için aşağıdaki curl metodunu kullanabilirsiniz. 
+    
+    1. Üst Panel
+    
+            curl http://192.168.17.91:7373/api/v0.1/6c2498eac64f435797f22107b525db80/push\
+                 -X POST\
+                 -d "tile=big_value"\
+                 -d "key=raspberry"\
+                 -d 'data={"title": "Raspberrys location",
+                           "description": "MAC Address : 01:02:03:04:05:06",
+                           "big-value": "sw1 port 25",
+                           "upper-left-label": "Cabinet: ",
+                           "upper-left-value": "5",
+                           "lower-left-label": "Kat/Floor:",
+                           "lower-left-value": "2",
+                           "upper-right-label": "Before :",
+                           "upper-right-value": "Sw2 port 24",
+                           "lower-right-label": "Cabinet:",
+                           "lower-right-value": "2"}'
+    2. Alt Panel    
+
+            curl http://192.168.17.91:7373/api/v0.1/6c2498eac64f435797f22107b525db80/push\
+                 -X POST\
+                 -d "tile=big_value"\
+                 -d "key=laptop1"\
+                 -d 'data={"title": "Raspberrys location",
+                           "description": "MAC Address : 01:02:03:04:05:06",
+                           "big-value": "sw1 port 25",
+                           "upper-left-label": "Cabinet: ",
+                           "upper-left-value": "5",
+                           "lower-left-label": "Kat/Floor:",
+                           "lower-left-value": "2",
+                           "upper-right-label": "Before :",
+                           "upper-right-value": "Sw2 port 24",
+                           "lower-right-label": "Cabinet:",
+                           "lower-right-value": "2"}'
 
 ### Notlar
 
