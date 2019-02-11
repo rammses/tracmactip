@@ -253,7 +253,7 @@ Bu klasörde bulunan get_facts.py dosyasını kullanarak test yaparsanız
 ### Notlar
 
 1. PIP bozulabilir rehash yapın geçin
-    ------------
+
     root@ubuntu:~#
     root@ubuntu:~# pip3
     Traceback (most recent call last):
@@ -267,7 +267,7 @@ Bu klasörde bulunan get_facts.py dosyasını kullanarak test yaparsanız
     Collecting junos-eznc
     Using cached https://files.pythonhosted.org/packages/00/b5/3d6d2d572789421b71d2bd7e3bae843db504cad59415bf817c7b9075aad6/junos_eznc-2.2.0-py2.py3-none-any.whl
     Collecting pyserial (from junos-eznc)
-    ------------
+
 
 2. Paramiko nun crypto modülleri warning basabilir bu bilinen bir bug kullandığım paramiko versiyonu ile ilgili.
 
